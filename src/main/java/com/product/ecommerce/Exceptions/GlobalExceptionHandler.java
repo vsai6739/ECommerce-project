@@ -12,6 +12,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleProductNotFoundException(ProductNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+    @ExceptionHandler(EmptyProductListException.class)
+    public ResponseEntity<String> handleEmptyProductListException(EmptyProductListException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 
     // Add more exception handlers for other custom exceptions if needed
 }

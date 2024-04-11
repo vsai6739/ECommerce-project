@@ -1,6 +1,8 @@
 package com.product.ecommerce.Services;
 
+import com.product.ecommerce.Exceptions.EmptyProductListException;
 import com.product.ecommerce.Exceptions.ProductNotFoundException;
+import com.product.ecommerce.Models.Category;
 import com.product.ecommerce.Models.Product;
 import com.product.ecommerce.Repositories.CategoryRepository;
 import com.product.ecommerce.Repositories.ProductRepository;
@@ -28,8 +30,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return null;
+    public List<Product> getAllProducts() throws EmptyProductListException {
+        List<Product> products = productRepository.findAll();
+        if(products.isEmpty()) throw new EmptyProductListException("No Products Found");
+        return products;
     }
 
     @Override
@@ -37,10 +41,25 @@ public class ProductServiceImpl implements ProductService {
         return null;
     }
 
-    @Override
     public Product createProduct(Product product) {
-        return null;
+        Category category = product.getCategory();
+
+        // Check if category exists in the database
+        if (category != null && category.getId() != null) {
+            Optional<Category> existingCategory = categoryRepository.findById(category.getId());
+            if (existingCategory.isPresent()) {
+                product.setCategory(existingCategory.get());
+            } else {
+                // Category doesn't exist, save it first
+                category = categoryRepository.save(category);
+                product.setCategory(category);
+            }
+        }
+
+        // Save the product
+        return productRepository.save(product);
     }
+
 
     @Override
     public void deleteProduct(Long id) {
