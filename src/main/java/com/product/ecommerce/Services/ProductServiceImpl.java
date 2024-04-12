@@ -37,10 +37,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Long id, Product product) {
-        return null;
+    public Product updateProduct(Long id, Product product) throws ProductNotFoundException{
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        Product existingProduct;
+        if(optionalProduct.isEmpty()) throw new ProductNotFoundException("Invalid ID, the product corresponding to given id is not present in database");
+        else {
+            existingProduct = optionalProduct.get();
+            if(product.getCategory()!=null) existingProduct.setCategory(product.getCategory());
+            if(product.getTitle()!=null) existingProduct.setTitle(product.getTitle());
+            if(product.getPrice()!=null) existingProduct.setPrice(product.getPrice());
+            if(product.getDescription()!=null) existingProduct.setDescription(product.getDescription());
+            if(product.getImageUrl()!=null) existingProduct.setImageUrl(product.getImageUrl());
+        }
+        productRepository.save(existingProduct);
+        return existingProduct;
     }
-
     public Product createProduct(Product product) {
         Category category = product.getCategory();
 
@@ -62,7 +73,17 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public void deleteProduct(Long id) {
-
+    public void deleteProduct(Long id)throws ProductNotFoundException {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isEmpty()) throw new ProductNotFoundException("Product not found to delete");
+        productRepository.deleteById(id);
+    }
+    public List<Product> getProductsByCategory(String category){
+        List<Product> productList = productRepository.findProductByCategory(category);
+        return productList;
+    }
+    public List<Product> getProductByTitle(String title){
+       List<Product> productList = productRepository.findProductByTitle(title);
+       return productList;
     }
 }

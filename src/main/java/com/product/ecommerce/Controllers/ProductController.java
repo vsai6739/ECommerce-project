@@ -32,11 +32,9 @@ public class ProductController {
         return productService.getAllProducts();
     }
     @PatchMapping("/{id}")
-    ResponseEntity<Product> updateProduct(@PathVariable("id") Long id ,@RequestBody Product product){
-        if(product!=null){
-            return ResponseEntity.ok(product);
-        }
-        return ResponseEntity.notFound().build();
+    ResponseEntity<Product> updateProduct(@PathVariable("id") Long id ,@RequestBody Product product)throws ProductNotFoundException{
+        Product updatedProduct = productService.updateProduct(id,product);
+        return ResponseEntity.ok(updatedProduct);
     }
     @PostMapping
     ResponseEntity<Product> createProduct(@RequestBody Product product){
@@ -45,6 +43,14 @@ public class ProductController {
     }
     @DeleteMapping("/{id}")
     void deleteProduct(@PathVariable("id")Long id){
-        return;
+        productRepository.deleteById(id);
+    }
+    @GetMapping("/{id}/{category}")
+    List<Product> getProductsByCategory(@PathVariable("category")String category){
+        return productService.getProductsByCategory(category);
+    }
+    @GetMapping("/{title}/")
+    List<Product> getProductsByTitle(@PathVariable("title")String title){
+        return productService.getProductByTitle(title);
     }
 }
