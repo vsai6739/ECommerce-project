@@ -6,12 +6,15 @@ import com.product.ecommerce.Models.Category;
 import com.product.ecommerce.Models.Product;
 import com.product.ecommerce.Repositories.CategoryRepository;
 import com.product.ecommerce.Repositories.ProductRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Primary
 public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
     CategoryRepository categoryRepository;

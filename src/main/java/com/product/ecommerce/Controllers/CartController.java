@@ -52,7 +52,7 @@ public class CartController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
-    @GetMapping("/totalPrice")
+    @GetMapping("/totalprice")
     ResponseEntity<String> getTotalPrice(){
         Double totalPrice = cartService.getTotalPrice();
         return ResponseEntity.ok("Total price of cart items is : " + totalPrice);

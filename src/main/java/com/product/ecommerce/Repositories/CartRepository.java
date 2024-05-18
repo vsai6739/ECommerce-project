@@ -16,12 +16,6 @@ public interface CartRepository extends JpaRepository<CartItem,Long> {
     Optional<CartItem> findByProductId(Long productId);
     @Query("SELECT SUM(c.quantity) FROM CartItem AS c")
     int getCartSize();
-    /*
-
-    select p.productTitle from CartItem
-    JOIN ON CartItem.product_id = p.id
-    GROUP BY p.productTitle;
-     */
     @Query("SELECT DISTINCT p.title " +
             "FROM CartItem ci " +
             "JOIN ci.product p")

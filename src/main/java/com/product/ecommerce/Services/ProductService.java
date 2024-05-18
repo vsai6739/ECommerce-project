@@ -3,9 +3,11 @@ package com.product.ecommerce.Services;
 import com.product.ecommerce.Exceptions.EmptyProductListException;
 import com.product.ecommerce.Exceptions.ProductNotFoundException;
 import com.product.ecommerce.Models.Product;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 import java.util.Optional;
+@Primary
 
 public interface ProductService {
     Product getProductById(Long id) throws ProductNotFoundException;
