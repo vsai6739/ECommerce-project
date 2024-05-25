@@ -13,11 +13,11 @@ public class AuthenticationCommons {
     }
 
 
-    public UserDto validateToken(String tokenValue) {
+    public UserDto validateToken(String token) {
         //Call UserService validateToken API to validate.
 
         ResponseEntity<UserDto> response = restTemplate.postForEntity(
-                "http://localhost:8080/users/validate/" + tokenValue,
+                "http://localhost:8080/users/validate/" + token,
                 null,
                 UserDto.class
         );

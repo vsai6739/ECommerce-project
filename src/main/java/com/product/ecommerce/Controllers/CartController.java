@@ -47,7 +47,7 @@ public class CartController {
     ResponseEntity<String> updateProductQuantity(@PathVariable("productId")Long productId , @PathVariable("quantity")int quantity){
         try{
             cartService.updateProductQuantity(productId,quantity);
-            return ResponseEntity.ok("Updated cartItem quantity successfully by : "+quantity);
+            return   ResponseEntity.ok("Updated cartItem quantity successfully by : "+quantity);
         } catch (ProductNotFoundException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         }

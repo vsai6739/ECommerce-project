@@ -2,6 +2,8 @@ package com.product.ecommerce.Repositories;
 
 import com.product.ecommerce.Models.Product;
 import com.product.ecommerce.Services.ProductServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +19,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("SELECT p FROM Product  p where p.title LIKE CONCAT('%',:title,'%')")
     List<Product> findProductByTitle(@Param("title") String title);
 
-    @Override
-    List<Product> findAll();
+    Page<Product> findAll(Pageable pageable);
 }

@@ -8,6 +8,9 @@ import com.product.ecommerce.Repositories.CategoryRepository;
 import com.product.ecommerce.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,8 +36,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() throws EmptyProductListException {
-        List<Product> products = productRepository.findAll();
+    public Page<Product> getAllProducts(int pageNumber , int pageSize) throws EmptyProductListException {
+        Sort sort = Sort.by("price").ascending();
+        Page<Product> products = productRepository.findAll(PageRequest.of(pageNumber,pageSize,sort));
         if(products.isEmpty()) throw new EmptyProductListException("No Products Found");
         return products;
     }

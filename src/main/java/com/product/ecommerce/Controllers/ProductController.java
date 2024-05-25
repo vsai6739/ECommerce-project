@@ -9,6 +9,7 @@ import com.product.ecommerce.Services.ProductService;
 import com.product.ecommerce.commons.AuthenticationCommons;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,30 +23,28 @@ import java.util.List;
 @Primary
 public class ProductController {
     ProductService productService;
-    private final ProductRepository productRepository;
     private AuthenticationCommons authenticationCommons;
 
     ProductController( ProductService productService,
-                      ProductRepository productRepository,
                        AuthenticationCommons authenticationCommons){
         this.productService = productService;
-        this.productRepository = productRepository;
         this.authenticationCommons = authenticationCommons;
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id)throws ProductNotFoundException {
-//        Product product = productService.getProductById(id);
-//        return new ResponseEntity<Product>(product,HttpStatus.OK);
-//    }
-    @GetMapping("/{tokenValue}")
-    List<Product> getAllProducts(@PathVariable("tokenValue") String tokenValue) throws EmptyProductListException {
-        UserDto userDto = authenticationCommons.validateToken(tokenValue);
-        if(userDto==null){
-            // Token is invalid
-            return new ArrayList<>();
-        }
-        return productService.getAllProducts();
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id)throws ProductNotFoundException {
+        Product product = productService.getProductById(id);
+        return new ResponseEntity<Product>(product,HttpStatus.OK);
+    }
+    @GetMapping
+    Page<Product> getAllProducts(@RequestParam("pageNumber")int pageNumber,
+                                 @RequestParam("pageSize") int pageSize) throws EmptyProductListException {
+//        UserDto userDto = authenticationCommons.validateToken(token);
+//        if(userDto==null){
+//            // Token is invalid
+//            return new ArrayList<>();
+//        }
+        return (Page<Product>) productService.getAllProducts(pageNumber,pageSize);
     }
     @PatchMapping("/{id}")
     ResponseEntity<Product> updateProduct(@PathVariable("id") Long id ,@RequestBody Product product)throws ProductNotFoundException{
@@ -59,14 +58,14 @@ public class ProductController {
     }
     @DeleteMapping("/{id}")
     void deleteProduct(@PathVariable("id")Long id){
-        productRepository.deleteById(id);
+        productService.deleteProduct(id);
     }
     @GetMapping("/{id}/{category}")
     List<Product> getProductsByCategory(@PathVariable("category")String category){
         return productService.getProductsByCategory(category);
     }
-//    @GetMapping("/{title}/")
-//    List<Product> getProductsByTitle(@PathVariable("title")String title){
-//        return productService.getProductByTitle(title);
-//    }
+    @GetMapping("/{title}/")
+    List<Product> getProductsByTitle(@PathVariable("title")String title){
+        return productService.getProductByTitle(title);
+    }
 }
