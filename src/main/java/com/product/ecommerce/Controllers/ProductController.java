@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +25,26 @@ import java.util.List;
 public class ProductController {
     ProductService productService;
     private AuthenticationCommons authenticationCommons;
+    private RestTemplate restTemplate;
 
     ProductController( ProductService productService,
-                       AuthenticationCommons authenticationCommons){
+                       AuthenticationCommons authenticationCommons,
+                       RestTemplate restTemplate){
         this.productService = productService;
         this.authenticationCommons = authenticationCommons;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") Long id)throws ProductNotFoundException {
         Product product = productService.getProductById(id);
+
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://userservice/users/12", String.class);
+
         return new ResponseEntity<Product>(product,HttpStatus.OK);
     }
-    @GetMapping
+    @GetMapping("/")
     Page<Product> getAllProducts(@RequestParam("pageNumber")int pageNumber,
                                  @RequestParam("pageSize") int pageSize) throws EmptyProductListException {
 //        UserDto userDto = authenticationCommons.validateToken(token);

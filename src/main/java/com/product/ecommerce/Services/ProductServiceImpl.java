@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,18 +22,31 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
-    ProductServiceImpl(ProductRepository productRepository ,CategoryRepository categoryRepository ){
+    private RedisTemplate redisTemplate;
+    ProductServiceImpl(ProductRepository productRepository ,CategoryRepository categoryRepository,RedisTemplate redisTemplate ){
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.redisTemplate = redisTemplate;
     }
     @Override
     public Product getProductById(Long id) throws ProductNotFoundException {
-        // Here Optional will automatically convert database attributes to product object.
+        // Retrieve the product from Redis cache
+        Product prod = (Product) redisTemplate.opsForHash().get("PRODUCT", "PROD_" + id);
+        if (prod != null) {
+            return prod;
+        }
+
+        // Fetch product from the database
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {
             throw new ProductNotFoundException("Product not found with ID: " + id);
         }
-        return product.get();
+
+        // Store the product in Redis cache
+        prod = product.get();
+        redisTemplate.opsForHash().put("PRODUCT", "PROD_" + id, prod);
+
+        return prod;
     }
 
     @Override
